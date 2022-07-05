@@ -1,14 +1,25 @@
-import type { NextPage } from 'next';
+// import type { NextPage } from 'next';
 import { useState } from 'react';
+import { prisma } from '../lib/prisma';
+import { GetServerSideProps } from 'next';
+import { forceReload } from '../helpers/forceReload';
 
+interface Notes {
+  notes: {
+    id: string;
+    title: string;
+    content: string;
+  }[];
+}
 interface FormData {
   title: string;
   content: string;
   id: string;
 }
 
-const Home: NextPage = () => {
+const Home = ({ notes }: Notes) => {
   const [form, setForm] = useState<FormData>({ title: '', content: '', id: '' })
+
 
   async function create(data: FormData) {
     try {
@@ -17,8 +28,13 @@ const Home: NextPage = () => {
         headers: {
           'Content-Type': 'application/json'
         },
-        method: 'POST'
-      }).then(() => setForm({ title: '', content: '', id: '' }));
+        method: 'POST',
+      })
+      setTimeout(() => {
+        console.log('success')
+        setForm({ title: '', content: '', id: '' });
+        forceReload();
+      }, 100)
     } catch (e) {
       console.error(e);
     }
@@ -38,9 +54,11 @@ const Home: NextPage = () => {
       <h1 className="mt-4 font-bold text-center text-2x1">Notes</h1>
       <form onSubmit={e => {
         e.preventDefault()
+        handleSubmit(form)
       }}>
 
         <input
+          placeholder="Title"
           type="text"
           value={form.title}
           onChange={e => setForm({ ...form, title: e.target.value })}
@@ -52,8 +70,38 @@ const Home: NextPage = () => {
         ></textarea>
         <button type="submit" >Add +</button>
       </form>
+      <div>
+        <ul>
+          {notes.map(note => {
+            return (
+              <li key={note.id}>
+                <h3>{note.title}</h3>
+                <p>{note.content}</p>
+              </li>
+            )
+          })}
+        </ul>
+      </div>
     </div>
   )
 }
 
 export default Home
+
+
+
+export const getServerSideProps: GetServerSideProps = async () => {
+  const notes = await prisma.note.findMany({
+    select: {
+      title: true,
+      content: true,
+      id: true,
+    }
+  });
+
+  return {
+    props: {
+      notes
+    }
+  }
+} 

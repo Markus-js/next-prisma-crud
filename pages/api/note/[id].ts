@@ -6,7 +6,14 @@ export default async function handler(
     req: NextApiRequest,
     res: NextApiResponse
 ) {
-    const { title, content } = req.body;
+    const noteId = req.query.id;
+
+    if (req.method === "DELETE") {
+        const note = await prisma.note.delete({
+            where: { id: Number(noteId) },
+        });
+        res.json(note);
+    }
 
     try {
         await prisma.note.create({
@@ -20,13 +27,3 @@ export default async function handler(
         res.status(500).send(e);
     }
 }
-
-// const { name, email, password } = req.body;
-// const user = await prisma.user.create({
-//   data: {
-//     name,
-//     email,
-//     password,
-//   },
-// });
-// res.status(201).json(user);
