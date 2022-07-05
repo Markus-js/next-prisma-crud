@@ -34,11 +34,49 @@ const Home = ({ notes }: Notes) => {
         console.log('success')
         setForm({ title: '', content: '', id: '' });
         forceReload();
-      }, 100)
+      }, 200)
     } catch (e) {
       console.error(e);
     }
   }
+
+  async function deleteNote(id: string) {
+    try {
+      fetch(`http://localhost:3000/api/note/${id}`, {
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        method: 'DELETE',
+      })
+      setTimeout(() => {
+        console.log('success')
+        setForm({ title: '', content: '', id: '' });
+        forceReload();
+      }, 200)
+    } catch (e) {
+      console.error(e);
+    }
+  }
+
+  async function UpdateNote(id: string, data: FormData) {
+    try {
+      fetch(`http://localhost:3000/api/note/${id}`, {
+        body: JSON.stringify(data),
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        method: 'PUT',
+      })
+      setTimeout(() => {
+        console.log('success')
+        setForm({ title: '', content: '', id: '' });
+        forceReload();
+      }, 200)
+    } catch (e) {
+      console.error(e);
+    }
+  }
+
 
   const handleSubmit = async (data: FormData) => {
     try {
@@ -77,6 +115,8 @@ const Home = ({ notes }: Notes) => {
               <li key={note.id}>
                 <h3>{note.title}</h3>
                 <p>{note.content}</p>
+                <button onClick={() => { UpdateNote(note.id, form) }}>Update</button>
+                <button onClick={() => { deleteNote(note.id) }}>X</button>
               </li>
             )
           })}

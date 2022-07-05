@@ -1,6 +1,6 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import type { NextApiRequest, NextApiResponse } from "next";
-import { prisma } from "../../lib/prisma";
+import { prisma } from "../../../lib/prisma";
 
 export default async function handler(
     req: NextApiRequest,
@@ -10,20 +10,23 @@ export default async function handler(
 
     if (req.method === "DELETE") {
         const note = await prisma.note.delete({
-            where: { id: Number(noteId) },
+            where: { id: noteId?.toString() },
         });
         res.json(note);
+    } else {
+        console.log("Could not be deleted");
     }
 
-    try {
-        await prisma.note.create({
+    const { title, content } = req.body;
+    if (req.method === "PUT") {
+        await prisma.note.update({
+            where: { id: noteId?.toString() },
             data: {
                 title,
                 content,
             },
         });
-    } catch (e) {
-        console.error(e);
-        res.status(500).send(e);
+    } else {
+        console.log("Could not be deleted");
     }
 }
