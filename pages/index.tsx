@@ -20,7 +20,6 @@ interface FormData {
 const Home = ({ notes }: Notes) => {
   const [form, setForm] = useState<FormData>({ title: '', content: '', id: '' })
 
-
   async function create(data: FormData) {
     try {
       fetch('http://localhost:3000/api/create', {
