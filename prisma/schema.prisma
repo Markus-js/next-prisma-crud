@@ -22,6 +22,7 @@ model Note {
 //   id    String @id @default(cuid())
 //   name  String
 //   email String @unique
+//   picture: String
 //   notes Note[]
 
 // }
