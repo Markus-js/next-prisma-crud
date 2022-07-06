@@ -4,11 +4,19 @@ import { prisma } from '../lib/prisma';
 import { GetServerSideProps } from 'next';
 import { forceReload } from '../helpers/forceReload';
 
+
+// interface User {
+//   id: string
+//   name: string
+//   picture: string
+//   email: string
+// }
 interface Notes {
   notes: {
     id: string;
     title: string;
     content: string;
+    // authorId: string;
   }[];
 }
 interface FormData {
@@ -16,6 +24,7 @@ interface FormData {
   content: string;
   id: string;
 }
+
 
 const Home = ({ notes }: Notes) => {
   const [form, setForm] = useState<FormData>({ title: '', content: '', id: '' })
@@ -38,6 +47,26 @@ const Home = ({ notes }: Notes) => {
       console.error(e);
     }
   }
+
+  // async function user(data: User) {
+  //   const newUser = { id: '', name: '', picture: '', email: '' }
+
+  //   try {
+  //     fetch('http://localhost:3000/api/user', {
+  //       body: JSON.stringify(newUser),
+  //       headers: {
+  //         'Content-Type': 'application/json'
+  //       },
+  //       method: 'POST',
+  //     })
+  //     setTimeout(() => {
+  //       console.log('success')
+  //       forceReload();
+  //     }, 200)
+  //   } catch (e) {
+  //     console.error(e);
+  //   }
+  // }
 
   async function deleteNote(id: string) {
     try {
@@ -135,6 +164,7 @@ export const getServerSideProps: GetServerSideProps = async () => {
       title: true,
       content: true,
       id: true,
+      // authorId: true
     }
   });
 
